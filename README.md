@@ -36,9 +36,7 @@ Each file in `init/` is the `init.t3c` of one experiment, named by the published
 | `FigS5a-c_plasticity_0.01.init.t3c` | Supplementary Fig. 5a–c | sin(φ)λ = 0.01, residual strength 1 MPa |
 | `FigS5d-f_plasticity_0.005_cohesion1MPa.init.t3c` | Supplementary Fig. 5d–f | sin(φ)λ = 0.005, residual strength 1 MPa |
 
-Supplementary Fig. 2 uses the same two experiments as Fig. 2g–i and Fig. 2j–l.
-
-The `Model_Settings_Fig*.t3c` files were already in this repository. They are earlier parameter files and use the previous figure numbers. The `init/` files are the initial conditions of the submitted Nature Communications figures.
+Supplementary Fig. 2 uses the same two experiments as Fig. 2g–i and Fig. 2j–l. The `init/` files are the initial conditions of the submitted Nature Communications figures.
 
 ## Plotting scripts and the files they read
 
