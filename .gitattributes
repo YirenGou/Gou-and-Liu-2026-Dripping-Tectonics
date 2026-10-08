@@ -1,0 +1,8 @@
+# Keep model files byte-for-byte so MANIFEST.tsv checksums still match.
+init/** -text
+plotting/**/*.txt -text
+plotting/**/*.npz -text
+*.py text eol=lf
+*.md text eol=lf
+*.tsv text eol=lf
+*.c text eol=lf
