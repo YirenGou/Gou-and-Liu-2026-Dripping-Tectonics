@@ -1,13 +1,13 @@
 """
-Fig. S1 — Water contents in mantle lithosphere.
+Fig. S5 — Grain size reduction in mantle lithosphere (s220, no isostasy).
 
-4 rows (250 / 500 / 1000 / 1500 ppm H/Si) × 3 columns:
+3 rows (100 / 10 / 1 μm) × 3 columns:
   col 0  Time = 0 (model 50 Myr)
-  col 1  mantle-lithosphere drip approaching the plot-window bottom (~342 km)
-  col 2  ~1.9–2.0 Myr after that drip, when LAB-depth change has slowed
+  col 1  mantle-lithosphere drip approaching the plot-window bottom (~350 km)
+  col 2  1–2 Myr after the drip, when LAB thinning has slowed
          (+ Initial LAB / New LAB / Δh annotations)
 
-Display time = model_time − TIME0_MODEL_MYR.
+    Display time = model_time − TIME0_MODEL_MYR.
 """
 
 from __future__ import annotations
@@ -25,7 +25,7 @@ from matplotlib.patches import Rectangle
 # USER CONTROLS  —  edit here for Spyder debugging (Ctrl+Enter cell)
 # ============================================================================
 BASE = Path(__file__).resolve().parent
-OUT_PNG = BASE / "FigS1_water_contents_mantle_lithosphere.png"
+OUT_PNG = BASE / "FigS5_grain_size_mantle_lithosphere.png"
 
 # Display time = model_time_Myr - TIME0_MODEL_MYR  (model 50 Myr → "0 Myr")
 TIME0_MODEL_MYR = 50.0
@@ -43,41 +43,36 @@ ASTHENOSPHERE_ID = 10
 
 @dataclass(frozen=True)
 class PanelRow:
-    """One figure row = one water-content model; 3 gouc steps (L→R)."""
+    """One figure row = one grain-size model; 3 gouc steps (L→R)."""
 
     folder: str
     steps: tuple[int, int, int]
-    water_label: str
-    # Depth (km) of the TOP of the water-content text (leftmost panel)
-    water_depth_km: float = 110.0
+    grain_label: str
+    # Depth (km) of the TOP of the grain-size text (leftmost panel)
+    grain_depth_km: float = 110.0
     force_display_left: float | None = 0.0
 
 
-# Steps: t=50 Myr | ML drip tip ~342 km (still fully in window) | that drip + ~2 Myr
+# Steps: t≈50 Myr | ML tip approaching window bottom | drip + 1–2 Myr (LAB rate slowed)
 ROWS = [
     PanelRow(
-        folder="FigS1a_50MyrInitiation_250ppm_NoIsostasy_s216",
-        steps=(85, 205, 285),
-        water_label=r"250 ppm H/Si",
+        folder="FigS3a_SameAsFig1c_100um_NoIsostasy_s220",
+        steps=(84, 199, 276),
+        grain_label=r"Grain size = 100 $\mathrm{\mu}$m",
     ),
     PanelRow(
-        folder="FigS1b_50MyrInitiation_500ppm_NoIsostasy_s216",
-        steps=(85, 178, 263),
-        water_label=r"500 ppm H/Si",
+        folder="FigS3b_SameAsFig1c_10um_NoIsostasy_s220",
+        steps=(84, 197, 270),
+        grain_label=r"Grain size = 10 $\mathrm{\mu}$m",
     ),
     PanelRow(
-        folder="FigS1c_50MyrInitiation_1000ppm_NoIsostasy_s216",
-        steps=(85, 156, 245),
-        water_label=r"1000 ppm H/Si",
-    ),
-    PanelRow(
-        folder="FigS1d_50MyrInitiation_1500ppm_NoIsostasy_s216",
-        steps=(85, 147, 242),
-        water_label=r"1500 ppm H/Si",
+        folder="FigS3c_SameAsFig1c_1um_NoIsostasy_s220",
+        steps=(84, 192, 275),
+        grain_label=r"Grain size = 1 $\mathrm{\mu}$m",
     ),
 ]
 
-# Legend: materials present in these weak-ML water models
+# Legend: materials present in these weak-ML grain-size models
 MATERIAL_LEGEND = [
     (0, "Air"),
     (5, "Upper Crust"),
@@ -131,7 +126,7 @@ def material_cmap():
 
 
 def remap_for_display(grid: np.ndarray) -> np.ndarray:
-    """Keep rock 8 as Weak ML (all FigS1 water models)."""
+    """Keep rock 8 as Weak ML (all Fig. S5 grain-size models)."""
     return np.array(grid, copy=True)
 
 
@@ -271,7 +266,7 @@ def style_axis(
         spine.set_linewidth(0.6)
 
     if show_xlabel:
-        ax.set_xlabel("Width (km)", labelpad=5)
+        ax.set_xlabel("Width (km)", labelpad=6)
     else:
         ax.set_xlabel("")
     if not show_xticklabels:
@@ -345,6 +340,94 @@ def pack_panel_rows(axes: np.ndarray, hspace: float, *, min_bottom: float = 0.14
             ax.set_position([p.x0, y0, p.width, panel_h])
 
 
+def place_legend_and_trim(
+    fig,
+    axes: np.ndarray,
+    leg_ax,
+    colors: np.ndarray,
+    *,
+    legend_gap_in: float = 0.14 * 1.7,  # gap below "Width (km)" → legend
+    legend_h_in: float = 0.48,
+    bottom_pad_in: float = 0.04,
+):
+    """Put legend below 'Width (km)' with a clear gap; crop bottom dead space."""
+    fig.canvas.draw()
+    renderer = fig.canvas.get_renderer()
+    inv = fig.transFigure.inverted()
+
+    xlabel_y0 = 1.0
+    for j in range(axes.shape[1]):
+        lab = axes[-1, j].xaxis.get_label()
+        if not lab.get_text():
+            continue
+        bb = lab.get_window_extent(renderer=renderer)
+        _, y0 = inv.transform((bb.x0, bb.y0))
+        xlabel_y0 = min(xlabel_y0, float(y0))
+
+    pos_l = axes[-1, 0].get_position()
+    pos_r = axes[-1, -1].get_position()
+    fig_h_in = float(fig.get_size_inches()[1])
+    leg_gap = legend_gap_in / fig_h_in
+    leg_h = legend_h_in / fig_h_in
+    leg_y0 = xlabel_y0 - leg_gap - leg_h
+    if leg_y0 < 0.01:
+        need = (0.01 + leg_gap + leg_h) - xlabel_y0
+        new_h = fig_h_in * (1.0 + need)
+        scale_up = fig_h_in / new_h
+        for ax in list(axes.flat) + [leg_ax]:
+            if ax is None:
+                continue
+            p = ax.get_position()
+            y1_new = 1.0 - (1.0 - p.y1) * scale_up
+            y0_new = 1.0 - (1.0 - p.y0) * scale_up
+            ax.set_position([p.x0, y0_new, p.width, y1_new - y0_new])
+        fig.set_size_inches(FIG_W_IN, new_h, forward=True)
+        fig.canvas.draw()
+        renderer = fig.canvas.get_renderer()
+        inv = fig.transFigure.inverted()
+        xlabel_y0 = 1.0
+        for j in range(axes.shape[1]):
+            lab = axes[-1, j].xaxis.get_label()
+            if not lab.get_text():
+                continue
+            bb = lab.get_window_extent(renderer=renderer)
+            _, y0 = inv.transform((bb.x0, bb.y0))
+            xlabel_y0 = min(xlabel_y0, float(y0))
+        pos_l = axes[-1, 0].get_position()
+        pos_r = axes[-1, -1].get_position()
+        fig_h_in = float(fig.get_size_inches()[1])
+        leg_gap = legend_gap_in / fig_h_in
+        leg_h = legend_h_in / fig_h_in
+        leg_y0 = xlabel_y0 - leg_gap - leg_h
+
+    # Legend top sits legend_gap_in below the x-label; height is generous for now
+    leg_ax.set_position([pos_l.x0, leg_y0, pos_r.x1 - pos_l.x0, leg_h])
+    add_material_legend(leg_ax, colors)
+
+    # Measure true legend content bottom (swatches + labels), then crop tightly
+    fig.canvas.draw()
+    renderer = fig.canvas.get_renderer()
+    inv = fig.transFigure.inverted()
+    content_y0 = leg_ax.get_position().y1
+    for artist in list(leg_ax.patches) + list(leg_ax.texts):
+        bb = artist.get_window_extent(renderer=renderer)
+        _, y0 = inv.transform((bb.x0, bb.y0))
+        content_y0 = min(content_y0, float(y0))
+
+    fig_h_in = float(fig.get_size_inches()[1])
+    bottom_pad = bottom_pad_in / fig_h_in
+    crop = content_y0 - bottom_pad
+    if crop > 0.008:
+        new_h = fig_h_in * (1.0 - crop)
+        for ax in list(axes.flat) + [leg_ax]:
+            if ax is None:
+                continue
+            p = ax.get_position()
+            y0n = (p.y0 - crop) / (1.0 - crop)
+            y1n = (p.y1 - crop) / (1.0 - crop)
+            ax.set_position([p.x0, y0n, p.width, y1n - y0n])
+        fig.set_size_inches(FIG_W_IN, new_h, forward=True)
+
 def format_display_time(t_disp: float) -> str:
     t = max(0.0, t_disp)
     if t < 0.05:
@@ -383,7 +466,7 @@ def time_label(ax, t_disp: float):
     )
 
 
-def add_water_annotation(ax, text: str, depth_km: float):
+def add_grain_annotation(ax, text: str, depth_km: float):
     x_mid = 0.5 * (X_BEG + X_END)
     ax.text(
         x_mid,
@@ -575,8 +658,8 @@ def add_material_legend(leg_ax, colors: np.ndarray):
     cx_right = 1.0 - 0.5 * w_last
     centres = np.linspace(cx0, cx_right, ncols)
 
-    # Top-align swatches so empty space sits below labels (trimmed later)
-    y0 = 0.97 - sw_h
+    # Top-align so thickening extends downward; labels follow
+    y0 = 0.90 - sw_h
     for col, (idx, name) in enumerate(items):
         cx = float(centres[col])
         x0 = 0.0 if col == 0 else cx - 0.5 * sw_w
@@ -610,97 +693,6 @@ def add_material_legend(leg_ax, colors: np.ndarray):
         )
 
 
-def place_legend_and_trim(
-    fig,
-    axes: np.ndarray,
-    leg_ax,
-    colors: np.ndarray,
-    *,
-    legend_gap_in: float = 0,
-    legend_h_in: float = 0.55,
-    bottom_pad_in: float = 0.02,
-):
-    """Place legend below 'Width (km)' with a clear gap; crop bottom dead space.
-
-    legend_gap_in is the gap from the bottom of the Width label to the legend
-    top (inches). Default ≈ 2× the previous effective Width→legend gap.
-    """
-    all_axes = [ax for ax in list(axes.flat) + [leg_ax] if ax is not None]
-
-    fig.canvas.draw()
-    renderer = fig.canvas.get_renderer()
-    inv = fig.transFigure.inverted()
-
-    xlabel_y0 = 1.0
-    for j in range(axes.shape[1]):
-        lab = axes[-1, j].xaxis.get_label()
-        if not lab.get_text():
-            
-            continue
-        bb = lab.get_window_extent(renderer=renderer)
-        _, y0 = inv.transform((bb.x0, bb.y0))
-        xlabel_y0 = min(xlabel_y0, float(y0))
-
-    pos_l = axes[-1, 0].get_position()
-    pos_r = axes[-1, -1].get_position()
-    fig_h_in = float(fig.get_size_inches()[1])
-    leg_gap = legend_gap_in / fig_h_in
-    leg_h = legend_h_in / fig_h_in
-    leg_y0 = xlabel_y0 - leg_gap - leg_h
-    if leg_y0 < 0.01:
-        need = (0.01 + leg_gap + leg_h) - xlabel_y0
-        new_h = fig_h_in * (1.0 + need)
-        scale_up = fig_h_in / new_h
-        for ax in all_axes:
-            p = ax.get_position()
-            y1_new = 1.0 - (1.0 - p.y1) * scale_up
-            y0_new = 1.0 - (1.0 - p.y0) * scale_up
-            ax.set_position([p.x0, y0_new, p.width, y1_new - y0_new])
-        fig.set_size_inches(FIG_W_IN, new_h, forward=True)
-        fig.canvas.draw()
-        renderer = fig.canvas.get_renderer()
-        inv = fig.transFigure.inverted()
-        xlabel_y0 = 1.0
-        for j in range(axes.shape[1]):
-            lab = axes[-1, j].xaxis.get_label()
-            if not lab.get_text():
-                continue
-            bb = lab.get_window_extent(renderer=renderer)
-            _, y0 = inv.transform((bb.x0, bb.y0))
-            xlabel_y0 = min(xlabel_y0, float(y0))
-        pos_l = axes[-1, 0].get_position()
-        pos_r = axes[-1, -1].get_position()
-        fig_h_in = float(fig.get_size_inches()[1])
-        leg_gap = legend_gap_in / fig_h_in
-        leg_h = legend_h_in / fig_h_in
-        leg_y0 = xlabel_y0 - leg_gap - leg_h
-
-    leg_ax.set_position([pos_l.x0, leg_y0, pos_r.x1 - pos_l.x0, leg_h])
-    add_material_legend(leg_ax, colors)
-
-    # Crop empty space below the true legend content (no bottom whitespace)
-    fig.canvas.draw()
-    renderer = fig.canvas.get_renderer()
-    inv = fig.transFigure.inverted()
-    content_y0 = leg_ax.get_position().y1
-    for artist in list(leg_ax.patches) + list(leg_ax.texts):
-        bb = artist.get_window_extent(renderer=renderer)
-        _, y0 = inv.transform((bb.x0, bb.y0))
-        content_y0 = min(content_y0, float(y0))
-
-    fig_h_in = float(fig.get_size_inches()[1])
-    bottom_pad = bottom_pad_in / fig_h_in
-    crop = content_y0 - bottom_pad
-    if crop > 0.008:
-        new_h = fig_h_in * (1.0 - crop)
-        for ax in all_axes:
-            p = ax.get_position()
-            y0n = (p.y0 - crop) / (1.0 - crop)
-            y1n = (p.y1 - crop) / (1.0 - crop)
-            ax.set_position([p.x0, y0n, p.width, y1n - y0n])
-        fig.set_size_inches(FIG_W_IN, new_h, forward=True)
-
-
 def _step_path(folder: Path, step: int) -> tuple[int, float, Path]:
     path = folder / f"gouc{step}.txt"
     if not path.exists() or path.stat().st_size < 100:
@@ -723,12 +715,13 @@ def main():
     n_rows = len(ROWS)
     n_cols = N_COLS
     left, right, top = 0.10, 0.915, 0.985
-    # Extra bottom room for Width label + 2× Width→legend gap + legend
+    # Room under panels for tick labels + "Width (km)" + gap + legend
     panel_bottom = 0.22
     fig_h = figure_height_in(
         n_rows, n_cols, hspace=HSPACE, bottom=panel_bottom, top=top
     )
-    fig_h += 0.95
+    # Modest pad; place_legend_and_trim crops leftover bottom whitespace
+    fig_h += 0.55
     fig_h = min(fig_h, 247.0 / 25.4)
 
     fig = plt.figure(figsize=(FIG_W_IN, fig_h))
@@ -747,7 +740,7 @@ def main():
         for j in range(n_cols):
             axes[i, j] = fig.add_subplot(gs[i, j])
 
-    leg_ax = fig.add_axes([left, 0.015, right - left, 0.08])
+    leg_ax = fig.add_axes([left, 0.02, right - left, 0.08])
     letters = "abcdefghijklmno"
     letter_i = 0
 
@@ -788,7 +781,7 @@ def main():
             time_label(ax, t_disp)
 
             if j == 0:
-                add_water_annotation(ax, row.water_label, row.water_depth_km)
+                add_grain_annotation(ax, row.grain_label, row.grain_depth_km)
                 lab0 = lab_depth_km(grid, z)
                 initial_labs.append(lab0 if lab0 is not None else 170.0)
 
@@ -809,17 +802,7 @@ def main():
             )
 
     pack_panel_rows(axes, HSPACE, min_bottom=0.20)
-
-    # 2× previous Width→legend gap; crop empty space below legend labels
-    place_legend_and_trim(
-        fig,
-        axes,
-        leg_ax,
-        colors,
-        legend_gap_in=0.16,
-        legend_h_in=0.55,
-        bottom_pad_in=0.02,
-    )
+    place_legend_and_trim(fig, axes, leg_ax, colors)
 
     fig.canvas.draw()
     for j in range(n_cols):

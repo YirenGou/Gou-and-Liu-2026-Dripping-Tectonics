@@ -1,4 +1,4 @@
-"""Shared I/O + melt-fraction physics for Fig. 5 (partial melting).
+"""Shared I/O + melt-fraction physics for Fig. 4 (partial melting).
 
 Data layout of the i2vis output in ``Fig5_MeltingCalc_80km``:
 

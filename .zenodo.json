@@ -1,0 +1,25 @@
+{
+  "title": "Model input settings and figure source data for volatile-assisted eclogite-pyroxenite lithospheric drips",
+  "description": "Modified I2VIS flow-law function, model initial conditions (init.t3c), and figure source snapshots for Gou and Liu, Geophysical Research Letters: Volatile-Assisted Eclogite-Pyroxenite Lithospheric Drips: Implications for Andean Topographic Evolution and Magmatism. Display time in the figures is model time minus 50 Myr. The original I2VIS method is Gerya and Yuen (2003); the solver distribution cited in the manuscript is Gerya, Bercovici, and Becker (2021).",
+  "upload_type": "dataset",
+  "license": "MIT",
+  "access_right": "open",
+  "creators": [
+    {
+      "name": "Gou, Yiren",
+      "affiliation": "Southern University of Science and Technology; University of Missouri"
+    },
+    {
+      "name": "Liu, Mian",
+      "affiliation": "Southern University of Science and Technology; University of Missouri"
+    }
+  ],
+  "keywords": [
+    "Central Andes",
+    "lithospheric drip",
+    "eclogite",
+    "pyroxenite",
+    "geodynamic modeling",
+    "I2VIS"
+  ]
+}

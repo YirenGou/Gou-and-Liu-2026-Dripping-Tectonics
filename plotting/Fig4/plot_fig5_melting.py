@@ -1,5 +1,5 @@
 """
-Fig. 5 — Partial melting driven by the eclogite/pyroxenite drip.
+Fig. 4 — Partial melting driven by the eclogite/pyroxenite drip.
 
 a  model initiation (model 50 Myr shown as 0 Myr), zoom on the dense body
 b  step 105, composition + melt-fraction contours
@@ -33,9 +33,9 @@ import fig5_data as fd
 # USER CONTROLS
 # ============================================================================
 BASE = Path(__file__).resolve().parent
-OUT_PNG = BASE / "Fig5_partial_melting.png"
-OUT_PDF = BASE / "Fig5_partial_melting.pdf"
-OUT_JPG = BASE / "Fig5_partial_melting.jpg"
+OUT_PNG = BASE / "Fig4_partial_melting.png"
+OUT_PDF = BASE / "Fig4_partial_melting.pdf"
+OUT_JPG = BASE / "Fig4_partial_melting.jpg"
 MARKER_NPZ = BASE / "marker_pt.npz"
 MARKER_NPZ_ASTH = BASE / "marker_pt_asth.npz"
 

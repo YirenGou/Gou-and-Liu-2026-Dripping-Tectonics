@@ -1,5 +1,5 @@
 """
-Fig. 3 — The existence of eclogite and pyroxenite.
+Fig. S4 — Pyroxenite alone does not drive convective dripping.
 
 2 models (Fig3a–b) × 3 times (display 0 / 100 / 200 Myr).
 Composition only; Nature-style layout from plot_fig2_strength.py,
@@ -22,7 +22,7 @@ from matplotlib.patches import Rectangle
 # ============================================================================
 # Paths
 BASE = Path(__file__).resolve().parent
-OUT_PNG = BASE / "Fig3_existence_ec_pyr.png"
+OUT_PNG = BASE / "FigS4_pyroxenite_alone.png"
 
 # Display time = model_time_Myr - TIME0_MODEL_MYR  (model 50 Myr → "0 Myr")
 TIME0_MODEL_MYR = 50.0

@@ -1,5 +1,5 @@
 """
-Fig. 4 — Sequential drips.
+Fig. 3 — Sequential drips.
 
 2 models (Fig4a–b) × 3 times. Each panel = Elevation strip (Topo.py) + composition.
 Style / layout adapted from plot_fig3_existence.py; elevation from Topo.py.
@@ -20,11 +20,11 @@ from matplotlib.patches import Rectangle
 # USER CONTROLS  —  edit here for Spyder debugging (Ctrl+Enter cell)
 # ============================================================================
 BASE = Path(__file__).resolve().parent
-OUT_PNG = BASE / "Fig4_sequential_drips_NoIsostasy.png"
-OUT_PDF = BASE / "Fig4_sequential_drips_NoIsostasy.pdf"
-OUT_SVG = BASE / "Fig4_sequential_drips_NoIsostasy.svg"
-OUT_EPS = BASE / "Fig4_sequential_drips_NoIsostasy.eps"
-OUT_TIFF = BASE / "Fig4_sequential_drips_NoIsostasy.tiff"
+OUT_PNG = BASE / "Fig3_sequential_drips_NoIsostasy.png"
+OUT_PDF = BASE / "Fig3_sequential_drips_NoIsostasy.pdf"
+OUT_SVG = BASE / "Fig3_sequential_drips_NoIsostasy.svg"
+OUT_EPS = BASE / "Fig3_sequential_drips_NoIsostasy.eps"
+OUT_TIFF = BASE / "Fig3_sequential_drips_NoIsostasy.tiff"
 
 # Display time = model_time_Myr - TIME0_MODEL_MYR  (model 50 Myr → "0 Myr")
 TIME0_MODEL_MYR = 50.0
